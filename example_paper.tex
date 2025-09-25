@@ -1,0 +1,166 @@
+%%%%%%%% ICML 2025 EXAMPLE LATEX SUBMISSION FILE %%%%%%%%%%%%%%%%%
+
+\documentclass{article}
+
+% Recommended, but optional, packages for figures and better typesetting:
+\usepackage{microtype}
+\usepackage{graphicx}
+\usepackage{subfigure}
+\usepackage{booktabs} % for professional tables
+
+% hyperref makes hyperlinks in the resulting PDF.
+% If your build breaks (sometimes temporarily if a hyperlink spans a page)
+% please comment out the following usepackage line and replace
+% \usepackage{icml2025} with \usepackage[nohyperref]{icml2025} above.
+\usepackage{hyperref}
+
+
+% Attempt to make hyperref and algorithmic work together better:
+\newcommand{\theHalgorithm}{\arabic{algorithm}}
+
+% Use the following line for the initial blind version submitted for review:
+% \usepackage{icml2025}
+
+% If accepted, instead use the following line for the camera-ready submission:
+\usepackage[accepted]{icml2025}
+
+% For theorems and such
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathtools}
+\usepackage{amsthm}
+
+% if you use cleveref..
+\usepackage[capitalize,noabbrev]{cleveref}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% THEOREMS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{assumption}[theorem]{Assumption}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+
+% Todonotes is useful during development; simply uncomment the next line
+%    and comment out the line below the next line to turn off comments
+%\usepackage[disable,textsize=tiny]{todonotes}
+\usepackage[textsize=tiny]{todonotes}
+
+
+% The \icmltitle you define below is probably too long as a header.
+% Therefore, a short form for the running title is supplied here:
+\icmltitlerunning{Californian Hospital Rating and Condition on Mortality Rate}
+
+\begin{document}
+
+\twocolumn[
+\icmltitle{Assessing the Impact of Hospital Ratings and Conditions on Risk-Adjusted Mortality: Evidence from California Hospitals in 2023}
+
+% It is OKAY to include author information, even for blind
+% submissions: the style file will automatically remove it for you
+% unless you've provided the [accepted] option to the icml2025
+% package.
+
+% List of affiliations: The first argument should be a (short)
+% identifier you will use later to specify author affiliations
+% Academic affiliations should list Department, University, City, Region, Country
+% Industry affiliations should list Company, City, Region, Country
+
+% You can specify symbols, otherwise they are numbered in order.
+% Ideally, you should not use this facility. Affiliations will be numbered
+% in order of appearance and this is the preferred way.
+\icmlsetsymbol{equal}{*}
+
+\begin{icmlauthorlist}
+\icmlauthor{Hilda Joseph}{yyy}
+\icmlauthor{Caroline Ngyuen}{yyy}
+\icmlauthor{Eddie Zhang}{yyy}
+
+\end{icmlauthorlist}
+
+\icmlaffiliation{yyy}{School of Data Science, University of Virginia, Charlottesville, Virginia, United States of America}
+
+
+% You may provide any keywords that you
+% find helpful for describing your paper; these are used to populate
+% the "keywords" metadata in the PDF but will not be shown in the document
+\icmlkeywords{Machine Learning, ICML}
+
+\vskip 0.3in
+]
+
+% this must go after the closing bracket ] following \twocolumn[ ...
+
+% This command actually creates the footnote in the first column
+% listing the affiliations and the copyright notice.
+% The command takes one argument, which is text to display at the start of the footnote.
+% The \icmlEqualContribution command is standard text for equal contribution.
+% Remove it (just {}) if you do not need this facility.
+  % leave blank if no need to mention equal contribution
+\section {Data Description}
+
+\subsection{Data} The dataset is from data.gov, and refers to a California set about hospital mortality rates for certain conditions and their quality ratings. The data was publicly accessible, and the idea of the paper was established due to the authors’ interest in the healthcare field. 
+
+\textbf{Dataset} \\ https://catalog.data.gov/dataset/california-hospital-inpatient-mortality-rates-and-quality-ratings-8e21f
+
+\subsection{Key Variables} Hospital, rating, condition, and risk-adjusted mortality rate \\
+The hospitals refer to various hospitals in California. The ratings of the hospitals are either ‘worse,’ ‘better,’ or ‘as expected’ than normal. The condition is the disease the person in the case has. And the risk adjusted mortality rate is the hospital’s observed death rate to its expected death rate after accounting for patient-specific risk factors like age.
+
+\subsection{Research Question} For each Californian hospital in 2023, how are the hospital ratings and medical conditions associated with the risk adjusted mortality rate and the proportion of deaths out of total cases?
+
+\subsection{Scope}
+The data focuses on Californian hospitals in 2023 because it represents the most recent year available in the dataset. Using the latest year ensures that our analysis reflects the most up-to-date information on hospital performance, operations, and outcomes, making the findings more relevant to our research questions.
+The dataset includes medical conditions such as: AAA Repair Unruptured, AMI Acute Stroke, Acute Stroke Hemorrhagic, Acute Stroke Ischemic, Acute Stroke Subarachnoid, Carotid Endarterectomy, Esophageal Resection, GI Hemorrhage, Heart Failure, Hip Fracture, PCI Pancreatic Cancer, Pancreatic Other, Pancreatic Resection, Pneumonia. 
+
+\subsection{Challenges in Reading, Cleaning, and Preparing the Data}
+
+\\Since we are working with real-world administrative or performance data, it comes with multiple challenges. Below are key issues and ideas for how to address them:
+
+\textbf{Small Sample Sizes and Statistical Stability } 
+
+Some hospitals may have very low case volume for certain conditions or procedures in some years. It is possible that mortality rates derived from small denominators can be highly volatile. Steps need to be taken to normalize the smallest sample sizes. For different case volumes, we will weight each hospital’s contribution by the number of cases to reduce the distortion from small-sample hospitals. We will exclude conditions with too few cases that are not statistically meaningful.
+
+\\ \textbf {Numeric Formatting}
+
+Some entries might include non-numeric characters, which must be cleaned or parsed carefully. 
+The risk-adjusted mortality rates come in formats such as X.X per 100 cases, we need to clean or adjust the scale to make it consistent 
+We will convert mortality rates, case counts, and volume numbers to numeric types and watch out for cells with text.
+
+\\ \textbf{Outliers, Extreme Values, and Anomalies}
+
+Before modeling, we need to explore distributions and flag extreme outliers is crucial.
+We will flag suspiciously high or low mortality rates and investigate whether these are valid small-sample effects or reporting errors.\\
+
+\textbf{Missing, Suppressed Values - Lack of Cases} 
+
+Many hospitals have no values for many conditions, meaning there will need to be a lot of adding of NAs to better sort the data. We will identify which fields are empty and exclude them from rate calculations.
+
+\subsection{Steps for Workflow} \\ \textbf{Read In with Care} 
+
+We will use a library depending on the language that tolerates missing or malformed entries and reads numerical/string variables. \\
+
+\textbf{Initial Sanity Checks} 
+
+We plan to count missingness per column, check ranges of numeric variables, look for impossible values (i.e. negatives, greater than 100 percent mortality), narrow down the dataset to the year 2023 only, and inspect sample sizes. 
+
+\\ \textbf{Standardized Column Names and Formats} 
+
+It is important to unify naming (e.g. “AMI” vs “Acute Myocardial Infarction”) and convert rates to consistent numeric scale, coerce types. \\
+
+\textbf{Model-Ready Dataset} 
+
+Ensure to drop or flag residual missing entries, impute if justifiable, and divide into training/test splits if doing an explanatory modeling. \\
+
+\textbf{Documentation} 
+
+We will keep track of cleaning rules for the dataset (e.g. how missing values are treated) to ensure transparency and reproducibility.
+
+
+\end{document}
+
